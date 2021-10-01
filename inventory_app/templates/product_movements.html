@@ -1,0 +1,141 @@
+{% extends "nav_bar.html" %}
+{% block content %}
+    <script>
+        $(document).ready(function(){
+            let product_movements = [];
+            {% for product_movement_obj in product_movements%}
+                product_movements.push({'movement_id':{{product_movement_obj.movement_id}},'product_name': '{{ product_movement_obj.product_name }}','from_location':'{{product_movement_obj.from_location}}','to_location':'{{product_movement_obj.to_location}}','quantity':{{product_movement_obj.quantity}} })
+            {%endfor%}
+            $("[name='edit_product_movement']").click(function(){
+                let movement_id = Number($(this).attr("movement_id"));
+                let product_movementObj =  product_movements.find(v => v["movement_id"] == movement_id);
+                $("#editproduct_movementModal").find("[name='product_name']").val(product_movementObj["product_name"]);
+                $("#editproduct_movementModal").find("[name='from_location']").val(product_movementObj["from_location"]);
+                $("#editproduct_movementModal").find("[name='to_location']").val(product_movementObj["to_location"]);
+                $("#editproduct_movementModal").find("[name='quantity']").val(product_movementObj['quantity']);
+                $("#editproduct_movementModal").find("[name='movement_id']").val(product_movementObj['movement_id']);               
+            })                        
+        })
+    </script>
+    <div class="modal fade" id="editproduct_movementModal" tabindex="-1" role="dialog" aria-labelledby="editProductModalLable" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Edit Product Movement</h3>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div id="modal-cont" class="modal-body" >
+                <form  action="/product_movement/update" method="POST">
+                    <input type="hidden" name="movement_id">
+                    <div class="form-group"><label for="from_location"><strong>From Location: </strong></label>
+                    <select class="form-control" name="from_location" readonly required>
+                        <option value="None"</option>
+                        {% for warehouse_opt in locations_options %}
+                            <option value='{{ warehouse_opt.location_name }}'>{{warehouse_opt.location_name}}</option>
+                        {% endfor %}
+                    </select></div>
+
+                    <div class="form-group"><label for="to_location"><strong>To Location: </strong></label>
+                    <select class="form-control" name="to_location" readonly required>
+                        <option value="None"</option>
+                        {% for warehouse_opt in locations_options %}
+                            <option value='{{ warehouse_opt.location_name }}'>{{warehouse_opt.location_name}}</option>
+                        {% endfor %}
+                    </select></div>
+
+                    <div class="form-group"><label for="product_name"><strong>Product Name : </strong></label>
+                    <select class="form-control" name="product_name" readonly required>
+                        {% for product_opt in products_options%}
+                            <option value='{{ product_opt.product_name }}'>{{product_opt.product_name}}</option>
+                        {% endfor %}
+                    </select></div>
+                    <div class="form-group"><label for="quantity"><strong>Quantity : </strong></label><input type="number" class="form-control" name="quantity" required></div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Update</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        </div>
+    </div>
+    <div class="modal fade" id="allocateProductModal" tabindex="-1" role="dialog" aria-labelledby="allocateProductModalLable" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Allocate Product</h3>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div id="modal-cont" class="modal-body" >
+                <form  action="/product_movement/add" method="POST">
+                    <div class="form-group"><label for="from_location"><strong>From Location : </strong></label>
+                    <select class="form-control" name="from_location">
+                        <option value="None"</option>
+                        {% for warehouse_opt in locations_options%}
+                            <option value='{{ warehouse_opt.location_name }}'>{{warehouse_opt.location_name}}</option>
+                        {% endfor %}
+                    </select></div>
+
+                    <div class="form-group"><label for="to_location"><strong>To Location : </strong></label>
+                    <select class="form-control" name="to_location">
+                        <option value="None"</option>
+                        {% for warehouse_opt in locations_options%}
+                            <option value='{{ warehouse_opt.location_name }}'>{{warehouse_opt.location_name}}</option>
+                        {% endfor %}
+                    </select></div>
+
+                    <div class="form-group"><label for="product_name"><strong>Product Name : </strong></label>
+                    <select class="form-control" name="product_name" required>
+                        {% for product_opt in products_options%}
+                            <option value='{{ product_opt.product_name }}'>{{product_opt.product_name}}</option>
+                        {% endfor %}
+                    </select></div>
+                    <div class="form-group"><label for="quantity"><strong>Quantity : </strong></label><input type="number" class="form-control" name="quantity" required></div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Add</button>
+                    </div>
+                </form>
+        </div>
+        </div>
+
+        </div>
+    </div>
+    <div class="container">
+        <div>
+            <h3 style="display: inline-block;margin:0;">Product Movements</h3>
+            <button type="button" class="btn btn-add" data-toggle="modal" data-target="#allocateProductModal">
+            <span class="btn-icon-add"><i class="icofont icofont-plus"></i></span>Move Product</button>
+        </div>
+            <table class="table table-hover">
+                <thead>
+                    <th>From location</th>
+                    <th>To Location</th>
+                    <th>Product Name</th>
+                    <th>Quantity</th>
+                    <th>Actions</th>
+                </thead>
+                <tbody>
+                    {% for product_movement_obj in product_movements %}
+                        <tr>
+                            <td >{{product_movement_obj.from_location}}</td>
+                            <td >{{product_movement_obj.to_location}}</td>
+                            <td >{{product_movement_obj.product_name}}</td>
+                            <td >{{product_movement_obj.quantity}}</td>
+                            <td>
+                                <div>
+                                    <a href="/product_movement/delete?movement_id={{product_movement_obj.movement_id}}" data-method="delete" class="btn btn-sm btn-danger" style="margin-left: 5px;"><i class="icofont-trash"></i></a>
+                                    <button type="button" name="edit_product_movement" class="btn btn-sm btn-warning" data-toggle="modal" data-target="#editproduct_movementModal" movement_id="{{ product_movement_obj.movement_id }}"><i class="icofont-edit" ></i></button>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}

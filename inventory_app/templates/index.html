@@ -1,0 +1,105 @@
+{% extends "nav_bar.html" %}
+{% block content %}
+    <script>
+        $(document).ready(function(){
+            let products = [];
+            {% for product in products%}
+                products.push({'product_id':{{product.product_id}},'prod_id': '{{ product.prod_id }}','product_name':'{{product.product_name}}','product_description':'{{product.product_description}}','product_price':{{product.product_price}} })
+            {%endfor%}
+            $("[name='edit_product']").click(function(){
+                let product_id = Number($(this).attr("product_id"));
+                let productObj =  products.find(v => v["product_id"] == product_id);
+                console.log("productObj",productObj)
+                $("#editProductModal").find("[name='prod_id']").val(productObj["prod_id"]);
+                $("#editProductModal").find("[name='product_name']").val(productObj["product_name"]);
+                $("#editProductModal").find("[name='actual_product_name']").val(productObj["product_name"]);
+                $("#editProductModal").find("[name='product_description']").val(productObj['product_description']);
+                $("#editProductModal").find("[name='product_price']").val(productObj['product_price']);
+                $("#editProductModal").find("[name='product_id']").val(productObj['product_id']);               
+            })                        
+        })
+    </script>
+    <div class="modal fade" id="editProductModal" tabindex="-1" role="dialog" aria-labelledby="editProductModalLable" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Edit Product</h3>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div id="modal-cont" class="modal-body" >
+                <form  action="/product/update" method="POST">
+                    <input type="hidden" name="product_id">
+                    <input type="hidden" name="actual_product_name">
+                    <div class="form-group"><label for="prod_id"><strong>PROD ID : </strong></label><input type="text" class="form-control" name="prod_id" readonly></div>
+                    <div class="form-group"><label for="product_name"><strong>Product Name : </strong></label><input type="text" class="form-control" name="product_name" required></div>
+                    <div class="form-group"><label for="product_description"><strong>Product Description : </strong></label><input type="text" class="form-control" name="product_description" required></div>
+                    <div class="form-group"><label for="product_price"><strong>Product Price(INR): </strong></label><input type="number"  step="any" class="form-control" name="product_price" required></div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Update</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        </div>
+    </div>
+    <div class="modal fade" id="addProductModal" tabindex="-1" role="dialog" aria-labelledby="addProductModalLable" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Add Product</h3>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div id="modal-cont" class="modal-body" >
+                <form  action="/product/add" method="POST">
+                    <div class="form-group"><label for="product_name"><strong>Product Name : </strong></label><input type="text" class="form-control" name="product_name" required></div>
+                    <div class="form-group"><label for="product_description"><strong>Product Description : </strong></label><input type="text" class="form-control" name="product_description" required></div>
+                    <div class="form-group"><label for="product_price"><strong>Product Price(INR) : </strong></label><input type="number"  step="any" class="form-control" name="product_price" required></div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Add</button>
+                    </div>
+            </form>
+        </div>
+        </div>
+
+        </div>
+    </div>
+    <div class="container">
+        <div>
+            <h3 style="display: inline-block;margin:0;">Products List</h3>
+            <button type="button" class="btn btn-add" data-toggle="modal" data-target="#addProductModal">
+            <span class="btn-icon-add"><i class="icofont icofont-plus"></i></span>Add Product</button>
+        </div>
+            <table class="table table-hover">
+                <thead>
+                    <th>PROD ID</th>
+                    <th>Product Name</th>
+                    <th>Description</th>
+                    <th>Price(INR)</th>
+                    <th>Actions</th>
+                </thead>
+                <tbody>
+                    {% for product in products %}
+                        <tr>
+                            <td >{{product.prod_id}}</td>
+                            <td >{{product.product_name}}</td>
+                            <td >{{product.product_description}}</td>
+                            <td >{{product.product_price}}</td>
+                            <td>
+                                <div>
+                                    <a href="/product/delete?product_id={{product.product_id}}" data-method="delete" class="btn btn-sm btn-danger" style="margin-left: 5px;"><i class="icofont-trash"></i></a>
+                                    <button type="button" name="edit_product" class="btn btn-sm btn-warning" data-toggle="modal" data-target="#editProductModal" product_id="{{ product.product_id }}"><i class="icofont-edit" ></i></button>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}

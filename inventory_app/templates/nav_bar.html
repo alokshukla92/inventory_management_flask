@@ -1,0 +1,40 @@
+<html>
+    <head>
+        <title>Inventory Management</title>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" >
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/icofont/icofont.min.css') }}" />
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/index.css') }}" />
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+        <link href='https://fonts.googleapis.com/css?family=Inter' rel='stylesheet'>
+    </head>
+    <body>
+        <script>
+            $(document).ready(function(){
+                if(location.pathname.split("/")[1] != ''){
+                    $('nav a').removeClass('active');
+                    $('nav a[href="/' + location.pathname.split("/")[1] + '"]').addClass('active');
+                }
+            });
+        </script>
+        <nav class="navbar navbar-expand-sm navbar-light bg-light">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="#">Inventory Management</a>
+            </div>
+            <ul class="nav nav-pills nav-fill" style="color: white;">
+                <li><a class="nav-item nav-link active" href="/">Products</a></li>
+                <li><a class="nav-item nav-link" href="/locations">Locations</a></li>
+                <li><a class="nav-item nav-link" href="/product_movement">Product movement</a></li>
+                <li><a class="nav-item nav-link" href="/product_movement_log">Movement Log</a></li>
+                <li><a class="nav-item nav-link" href="/summary">Summary</a></li>
+            </ul>
+          </nav>
+          <div class="d-flex justify-content-center align-items-center container">
+            <div  class="row" style="margin-top: 50px;">
+                {% block content %}
+                  Content Here
+                {% endblock %}
+            </div>
+        </div>
+    </body>
+</html>

@@ -1,0 +1,95 @@
+{% extends "nav_bar.html" %}
+{% block content %}
+    <script>
+        $(document).ready(function(){
+            let locations = [];
+            {% for location in locations %}
+                locations.push({'location_id':{{location.location_id}},'location_name':'{{location.location_name}}'})
+            {%endfor%}
+            $("[name='edit_location']").click(function(){
+                let location_id = Number($(this).attr("location_id"));
+                console.log(location_id,locations)
+                let locationObj =  locations.find(v => v["location_id"] == location_id);
+                $("#editlocationModal").find("[name='location_id']").val(locationObj["location_id"]);
+                $("#editlocationModal").find("[name='location_name']").val(locationObj["location_name"]);
+                $("#editlocationModal").find("[name='actual_location_name']").val(locationObj["location_name"]);
+            })                        
+        })
+    </script>
+    <div class="modal fade" id="editlocationModal" tabindex="-1" role="dialog" aria-labelledby="editlocationModalLable" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Edit location</h3>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div id="modal-cont" class="modal-body" >
+                <form  action="/location/update" method="POST">
+                    <input type="hidden" name="location_id">
+                    <input type="hidden" name="actual_location_name">
+                    <div class="form-group"><label for="location_id"><strong>location ID : </strong></label><input type="text" class="form-control" name="location_id" readonly></div>
+                    <div class="form-group"><label for="location_name"><strong>location Name : </strong></label><input type="text" class="form-control" name="location_name" required></div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Update</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        </div>
+    </div>
+    <div class="modal fade" id="addlocationModal" tabindex="-1" role="dialog" aria-labelledby="addlocationModalLable" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Add location</h3>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div id="modal-cont" class="modal-body" >
+                <form  action="/location/add" method="POST">
+                    <div class="form-group"><label for="location_name"><strong>location Name : </strong></label><input type="text" class="form-control" name="location_name" required></div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Add</button>
+                    </div>
+            </form>
+        </div>
+        </div>
+
+        </div>
+    </div>
+    <div class="container">
+        <div>
+            <h3 style="display: inline-block;margin:0;">Locations List</h3>
+            <button type="button" class="btn btn-add" data-toggle="modal" data-target="#addlocationModal">
+            <span class="btn-icon-add"><i class="icofont icofont-plus"></i></span> Add location</button>
+        </div>
+        <br>
+            <table class="table table-hover">
+                <thead>
+                    <th>location ID</th>
+                    <th>location Name</th>
+                    <th>Actions</th>
+                </thead>
+                <tbody>
+                    {% for location in locations %}
+                        <tr>
+                            <td >{{location.location_id}}</td>
+                            <td >{{location.location_name}}</td>
+                            <td>
+                                <div>
+                                    <a href="/location/delete?location_id={{location.location_id}}" data-method="delete" class="btn btn-sm btn-danger" style="margin-left: 5px;"><i class="icofont-trash"></i></a>
+                                    <button type="button" name="edit_location" class="btn btn-sm btn-warning" data-toggle="modal" data-target="#editlocationModal" location_id="{{ location.location_id }}"><i class="icofont-edit" ></i></button>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+{% endblock %}

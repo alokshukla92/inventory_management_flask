@@ -1,0 +1,33 @@
+{% extends "nav_bar.html" %}
+{% block content %}
+    <script>
+    </script>
+    <div class="container">
+        <div>
+            <h3 style="display: inline-block;margin:0;">Movement Logs</h3>
+        </div>
+            <table class="table table-hover">
+                <thead>
+                    <th>Date Time</th>
+                    <th>From Location</th>
+                    <th>To Location</th>
+                    <th>Product Name</th>
+                    <th>Quantity</th>
+                    <th>Action</th>
+                </thead>
+                <tbody>
+                    {% for log_obj in product_movement_logs %}
+                        <tr>
+                            <td >{{log_obj.datetime}}</td>
+                            <td >{{log_obj.from_location}}</td>
+                            <td >{{log_obj.to_location}}</td>
+                            <td >{{log_obj.product_name}}</td>
+                            <td >{{log_obj.quantity}}</td>
+                            <td >{{log_obj.action}}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}
